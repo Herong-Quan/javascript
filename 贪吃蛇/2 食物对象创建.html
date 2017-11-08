@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #map{
+            width: 800px;
+            height: 600px;
+            background-color: #cccccc;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    (function (){
+        function Food(options){
+            this.width=options.width;
+            this.height=options.height;
+            this.bgColor=options.bgColor;
+            this.map=options.map;
+            this.X=0;
+            this.Y =0;
+            this.element;
+
+        };
+        //食物初始化
+        Food.prototype.innt=function(){
+
+            if(this.element){
+                this.map.removeChild(this.element);
+            };
+            this.element=document.createElement("div");
+            var div =this.element;
+            div.style.width=this.width+"px";
+            div.style.height=this.height+"px";
+            div.style.backgroundColor=this.bgColor;
+            div.style.position="absolute";
+            this.X=Math.floor(Math.random()*this.map.offsetWidth/this.width);
+            this.Y=Math.floor(Math.random()*this.map.offsetHeight/this.height);
+            div.style.left=this.X*this.width+"px";
+            div.style.top=this.Y*this.height+"px";
+            this.map.appendChild(div);
+        };
+        var map=document.getElementById("map");
+        var food1=new Food({
+            map:map,
+            width:20,
+            height:20,
+            bgColor:"#00ff00",
+        });
+        food1.innt();
+    })();
+</script>
+</body>
+</html>

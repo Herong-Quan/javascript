@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #map{
+            width: 800px;
+            height: 600px;
+            background-color: #0000ff;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    //食物的构造函数
+    (function (){
+        //食物需要的属性
+        function Food(options){
+            this.width=options.width;//食物盒子的宽
+            this.height=options.height;//食物盒子高
+            this.bgColor=options.bgColor;//食物盒子的颜色
+            this.map=options.map;//盒子的地图
+            this.X=0;//盒子暂定的位置
+            this.Y =0;
+            this.element;//设置一个空盒子
+
+        };
+        //食物初始化
+        Food.prototype.innt=function(){
+            //判断失误是否已经存在
+            if(this.element){
+                this.map.removeChild(this.element);
+            };
+            //添加一个子节点放食物
+            this.element=document.createElement("div");
+            //给食物的盒子设置一个名字
+            var div =this.element;
+            div.style.width=this.width+"px";//食物的宽
+            div.style.height=this.height+"px";//食物的高
+            div.style.backgroundColor=this.bgColor;//食物的颜色
+            div.style.position="absolute";//食物定位
+            this.X=Math.floor(Math.random()*this.map.offsetWidth/this.width);//食物的坐标
+            this.Y=Math.floor(Math.random()*this.map.offsetHeight/this.height);
+            div.style.left=this.X*this.width+"px";//食物的宽高
+            div.style.top=this.Y*this.height+"px";
+            this.map.appendChild(div);//将食物添加到地图
+        };
+        window.Food=Food;//将食物设置成全局变量
+    })();
+
+
+    //蛇的构造函数
+    (function(){
+        //整个蛇需要的样式属性
+        function Snake(options){
+            this.width=options.width;//整个蛇的宽
+            this.height=options.height;//整个蛇的高
+            this.body=[                   //整个蛇的身体
+                {x:3,y:1,bgColor:"#ff0000"},//蛇头位置
+                {x:2,y:1,bgColor:"#ffff00"},//蛇身子
+                {x:1,y:1,bgColor:"#ffff00"},
+            ];
+            this.map=options.map;           //蛇运动的地图
+            this.food=options.food;         //
+            this.direction=options.direction;
+            //设置一个数组  保存蛇的数据
+            this.element=[];
+        }
+
+        //蛇初始化
+        Snake.prototype.innt=function(){
+            //遍历，在新的蛇出现时 旧的蛇已经存在  需要提前删除
+            for (var i = this.element.length-1; i >=0; i--) {
+                //删除旧的蛇的结构
+                this.map.removeChild(this.element[i]);
+                //删除旧的蛇的数据
+                this.element.splice(i,1);
+
+            }
+            var body=this.body;
+            for (var i = 0; i <body .length; i++) {
+                var div=document.createElement("div");
+                div.style.width=this.width+"px";
+                div.style.height=this.height+"px";
+                div.style.backgroundColor=body[i].bgColor;
+                div.style.position="absolute";
+                div.style.left=body[i].x*this.width+"px";
+                div.style.top=body[i].y*this.height+"px";
+                this.map.appendChild(div);
+                //将创建的结构保存到this.element的数组中，
+                this.element.push(div);
+            };
+        };
+        Snake.prototype.move=function(){
+            var body=this.body;
+            for (var i = body.length-1; i >0; i--) {
+                body[i].x=body[i-1].x;
+                body[i].y=body[i-1].y;
+
+            }
+            body[0].x++;
+            this.innt();
+        }
+        window.Snake=Snake;
+    })();
+
+    //游戏控制的构造函数
+    (function(){
+        //游戏李需要的一些属性
+        function Game(options){
+            //游戏的地图
+            this.mamp=options.map;
+            //需要的蛇的属性
+            this.snake=new Snake({
+                map:map,
+                width:20,
+                height:20,
+                direction:"right",
+            });
+            //需要的是食物的属性
+            this.food=new Food({
+                map:map,
+                width:20,
+                height:20,
+                bgColor:"#00ff00",
+            })
+        }
+        //游戏控制的初始化
+        Game.prototype.start=function(){
+            this.food.innt();//调用食物的初始化
+            this.snake.innt();//调用蛇的初始化
+
+        }
+        window.Game=Game;//生成全局变量
+    })();
+
+
+    var map=document.getElementById("map");
+    var game=new Game({
+        map:map,
+    });
+    game.start();
+
+</script>
+</body>
+</html>
